@@ -55,10 +55,15 @@ class TicketsController extends Controller
         return redirect()->back()->with("status", "A ticket with ID: #$ticket->ticket_id has been opened.");
     }
 
-    public function userTickets() {
-        $tickets = Ticket::where('user_id', Auth::user()->id)->paginate(10);
-        $categories = Category::all();
+    public function userTickets($user_id) {
+        $auth_user_id = Auth::user()->id;
+        if($auth_user_id != $user_id){
+            return redirect('/home');
+        }        
 
+        $tickets = Ticket::where('user_id', $user_id)->paginate(10);
+        $categories = Category::all();
+        
         return view('tickets.user_tickets', compact('tickets', 'categories'));
     }
 
@@ -71,10 +76,14 @@ class TicketsController extends Controller
         return view('tickets.show', compact('ticket', 'category', 'comments'));
     }
 
-    public function close($ticket_id, AppMailer $mailer) {
+    public function toggle_state($ticket_id, AppMailer $mailer) {
         $ticket = Ticket::where('ticket_id', $ticket_id)->firstOrFail();
     
-        $ticket->status = 'Closed';
+        if($ticket->status == 'Closed'){
+            $ticket->status = 'Open';
+        }else{
+            $ticket->status = 'Closed';
+        }
     
         $ticket->save();
     
@@ -82,6 +91,6 @@ class TicketsController extends Controller
     
         $mailer->sendTicketStatusNotification($ticketOwner, $ticket);
     
-        return redirect()->back()->with("status", "The ticket has been closed.");
+        return redirect()->back()->with("status", "The ticket status has been changed.");
     }
 }

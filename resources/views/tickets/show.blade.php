@@ -42,7 +42,7 @@
                         @endforeach
                     </div>
                     <div class="comment-form">
-                        <form action="{{ url('comment') }}" method="POST" class="form">
+                        <form action="{{ url('tickets/' . $ticket->id . '/comment') }}" method="POST" class="form">
                             {!! csrf_field() !!}
 
                             <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
@@ -58,7 +58,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" class="btn btn-primary">Add Comment</button>
                             </div>
                         </form>
                 </div>

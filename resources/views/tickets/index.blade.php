@@ -51,9 +51,15 @@
                                         <a href="{{ url('tickets/' . $ticket->ticket_id) }}" class="btn btn-primary">Comment</a>
                                     </td>
                                     <td>
-                                        <form action="{{ url('admin/close_ticket/' . $ticket->ticket_id) }}" method="POST">
+                                        <form action="{{ url('admin/toggle_ticket_state/' . $ticket->ticket_id) }}" method="POST">
                                             {!! csrf_field() !!}
-                                            <button type="submit" class="btn btn-danger">Close</button>
+                                            <button type="submit" class="btn btn-danger">
+                                                @if ($ticket->status === 'Open')
+                                                    Close
+                                                @else
+                                                    Reopen
+                                                @endif
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>

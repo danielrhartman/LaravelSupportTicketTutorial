@@ -12,21 +12,23 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/home');
 });
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('new_ticket', 'TicketsController@create');
-Route::get('my_tickets', 'TicketsController@userTickets');
-Route::get('tickets/{ticket_id}', 'TicketsController@show');
-Route::post('new_ticket', 'TicketsController@store');
+Route::group(['prefix' => 'tickets'], function() {
+    Route::get('/', 'TicketsController@create');
+    Route::get('/user/{user_id}', 'TicketsController@userTickets');
+    Route::get('/{ticket_id}', 'TicketsController@show');
+    Route::post('/', 'TicketsController@store');
+    Route::post('/{ticket_id}/comment', 'CommentsController@postComment');
+});
 
-Route::post('comment', 'CommentsController@postComment');
 
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function() {
     Route::get('tickets', 'TicketsController@index');
-    Route::post('close_ticket/{ticket_id}', 'TicketsController@close');
+    Route::post('toggle_ticket_state/{ticket_id}', 'TicketsController@toggle_state');
 });
